@@ -57,7 +57,7 @@ app.use('/api/progress', progressRoutes);
 
 // Serve Next.js pages in production (catch-all route for SPA)
 if (config.nodeEnv === 'production') {
-  app.get('*', (req: Request, res: Response) => {
+  app.use((req: Request, res: Response) => {
     // Serve the appropriate HTML file based on the route
     const frontendPath = path.join(__dirname, '../frontend');
     const requestedPath = req.path === '/' ? '/index.html' : req.path + '.html';
