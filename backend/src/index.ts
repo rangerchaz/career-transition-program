@@ -1,5 +1,6 @@
 import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
+import path from 'path';
 import { config } from './utils/config';
 import { logger } from './utils/logger';
 import { errorHandler } from './middleware/errorHandler';
@@ -16,11 +17,18 @@ const app: Application = express();
 
 // Middleware
 app.use(cors({
-  origin: config.frontendUrl,
+  origin: config.frontendUrl || '*',
   credentials: true,
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve static files from Next.js build in production
+if (config.nodeEnv === 'production') {
+  const frontendPath = path.join(__dirname, '../frontend');
+  app.use(express.static(path.join(frontendPath, 'public')));
+  app.use('/_next', express.static(path.join(frontendPath, '.next')));
+}
 
 // Request logging middleware
 app.use((req: Request, _res: Response, next) => {
@@ -48,15 +56,22 @@ app.use('/api/plans', planRoutes);
 app.use('/api/agents', agentRoutes);
 app.use('/api/progress', progressRoutes);
 
-// 404 handler
-app.use((_req: Request, res: Response) => {
-  res.status(404).json({
-    error: {
-      message: 'Route not found',
-      statusCode: 404,
-    },
+// Serve Next.js pages in production (catch-all route)
+if (config.nodeEnv === 'production') {
+  app.get('*', (_req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, '../frontend/index.html'));
   });
-});
+} else {
+  // 404 handler for development
+  app.use((_req: Request, res: Response) => {
+    res.status(404).json({
+      error: {
+        message: 'Route not found',
+        statusCode: 404,
+      },
+    });
+  });
+}
 
 // Error handling middleware (must be last)
 app.use(errorHandler);
