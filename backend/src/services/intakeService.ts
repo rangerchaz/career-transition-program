@@ -44,7 +44,7 @@ export async function startIntakeSession(userId: string): Promise<{
 
   if (existingSession) {
     // Return the existing session with a contextual question
-    const conversationHistory = existingSession.conversationHistory as ConversationMessage[];
+    const conversationHistory = existingSession.conversationHistory as unknown as ConversationMessage[];
     const lastMessage = conversationHistory && conversationHistory.length > 0
       ? conversationHistory[conversationHistory.length - 1]
       : null;
@@ -143,7 +143,7 @@ export async function processIntakeMessage(
   }
 
   // Get conversation history
-  const conversationHistory = (session.conversationHistory as ConversationMessage[]) || [];
+  const conversationHistory = (session.conversationHistory as unknown as ConversationMessage[]) || [];
 
   // Add user message to history
   conversationHistory.push({
@@ -274,9 +274,9 @@ export async function getIntakeSession(sessionId: string, userId: string) {
 
   return {
     id: session.id,
-    conversationHistory: session.conversationHistory as ConversationMessage[],
+    conversationHistory: session.conversationHistory as unknown as ConversationMessage[],
     currentStep: session.currentStep,
     isComplete: session.isComplete,
-    collectedData: session.collectedData as IntakeData,
+    collectedData: session.collectedData as unknown as IntakeData,
   };
 }

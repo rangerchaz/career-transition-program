@@ -252,7 +252,7 @@ export async function chatWithAgent(
       agentId,
       message,
       response,
-      context: context || {},
+      context: (context || {}) as any,
     },
   });
 
@@ -303,7 +303,7 @@ export async function getAgentConversation(
           role: agent.role,
         }
       : null,
-    interactions: interactions.reverse().map((interaction) => ({
+    interactions: interactions.reverse().map((interaction: any) => ({
       id: interaction.id,
       message: interaction.message,
       response: interaction.response,

@@ -100,16 +100,6 @@ export async function generatePlan(sessionId: string, userId: string): Promise<{
 
   const intakeData = session.collectedData as IntakeData;
 
-  // Check if plan already exists for this intake
-  const existingPlan = await prisma.careerPlan.findFirst({
-    where: {
-      userId,
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
-  });
-
   // Build context from intake data
   const userContext = `
 User Profile:
@@ -205,7 +195,7 @@ export async function getUserPlan(userId: string) {
     targetRole: plan.targetRole,
     currentRole: plan.currentRole,
     timeline: plan.timeline,
-    phases: plan.phases as PlanPhase[],
+    phases: plan.phases as unknown as PlanPhase[],
     createdAt: plan.createdAt,
     progress: plan.progressTracking[0] || null,
   };
@@ -230,7 +220,7 @@ export async function regeneratePlan(
     throw new Error('Plan not found');
   }
 
-  const phases = plan.phases as PlanPhase[];
+  const phases = plan.phases as unknown as PlanPhase[];
 
   if (phaseNumber !== undefined) {
     // Regenerate specific phase

@@ -14,7 +14,7 @@ export interface AuthRequest extends Request {
 // Verify JWT token and attach user to request
 export const authenticate = (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): void => {
   try {

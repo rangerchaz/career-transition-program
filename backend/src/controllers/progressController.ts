@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { asyncHandler, AppError } from '../middleware/errorHandler';
 import { AuthRequest } from '../middleware/auth';
 import {
-  getProgressStats,
   updateTaskCompletion,
   completeMilestone,
   getDetailedProgress,

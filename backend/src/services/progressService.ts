@@ -20,8 +20,8 @@ export async function getProgressStats(userId: string): Promise<ProgressStats | 
     return null;
   }
 
-  const phases = progress.plan.phases as PlanPhase[];
-  const completedTasks = (progress.completedTasks as string[]) || [];
+  const phases = progress.plan.phases as unknown as PlanPhase[];
+  const completedTasks = (progress.completedTasks as unknown as string[]) || [];
 
   // Calculate total tasks across all phases
   let totalTasks = 0;
@@ -47,7 +47,7 @@ export async function updateTaskCompletion(
   userId: string,
   taskId: string,
   completed: boolean,
-  milestoneId?: string
+  _milestoneId?: string
 ): Promise<ProgressStats> {
   const progress = await prisma.progressTracking.findFirst({
     where: { userId },
@@ -63,7 +63,7 @@ export async function updateTaskCompletion(
     throw new Error('No progress tracking found. Please generate a career plan first.');
   }
 
-  const completedTasks = (progress.completedTasks as string[]) || [];
+  const completedTasks = (progress.completedTasks as unknown as string[]) || [];
   const now = new Date();
   const lastActivity = new Date(progress.lastActivity);
 
@@ -95,7 +95,7 @@ export async function updateTaskCompletion(
   }
 
   // Determine current phase based on completed tasks
-  const phases = progress.plan.phases as PlanPhase[];
+  const phases = progress.plan.phases as unknown as PlanPhase[];
   let currentPhase = 0;
 
   for (let i = 0; i < phases.length; i++) {
@@ -180,8 +180,8 @@ export async function completeMilestone(
     throw new Error('No progress tracking found. Please generate a career plan first.');
   }
 
-  const phases = progress.plan.phases as PlanPhase[];
-  const completedTasks = (progress.completedTasks as string[]) || [];
+  const phases = progress.plan.phases as unknown as PlanPhase[];
+  const completedTasks = (progress.completedTasks as unknown as string[]) || [];
 
   // Find the milestone and mark all its tasks as complete
   let tasksToComplete: string[] = [];
@@ -234,8 +234,8 @@ export async function getDetailedProgress(userId: string) {
     return null;
   }
 
-  const phases = progress.plan.phases as PlanPhase[];
-  const completedTasks = (progress.completedTasks as string[]) || [];
+  const phases = progress.plan.phases as unknown as PlanPhase[];
+  const completedTasks = (progress.completedTasks as unknown as string[]) || [];
 
   // Build detailed breakdown
   const phaseProgress = phases.map((phase) => {
@@ -297,8 +297,8 @@ export async function getDashboardProgress(userId: string) {
     return null;
   }
 
-  const phases = progress.plan.phases as PlanPhase[];
-  const completedTasks = (progress.completedTasks as string[]) || [];
+  const phases = progress.plan.phases as unknown as PlanPhase[];
+  const completedTasks = (progress.completedTasks as unknown as string[]) || [];
 
   // Calculate total tasks
   let totalTasks = 0;
