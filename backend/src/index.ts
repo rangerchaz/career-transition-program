@@ -23,11 +23,10 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files from Next.js build in production
+// Serve static files from Next.js export in production
 if (config.nodeEnv === 'production') {
   const frontendPath = path.join(__dirname, '../frontend');
-  app.use(express.static(path.join(frontendPath, 'public')));
-  app.use('/_next', express.static(path.join(frontendPath, '.next')));
+  app.use(express.static(frontendPath));
 }
 
 // Request logging middleware
@@ -56,10 +55,20 @@ app.use('/api/plans', planRoutes);
 app.use('/api/agents', agentRoutes);
 app.use('/api/progress', progressRoutes);
 
-// Serve Next.js pages in production (catch-all route)
+// Serve Next.js pages in production (catch-all route for SPA)
 if (config.nodeEnv === 'production') {
-  app.get('*', (_req: Request, res: Response) => {
-    res.sendFile(path.join(__dirname, '../frontend/index.html'));
+  app.get('*', (req: Request, res: Response) => {
+    // Serve the appropriate HTML file based on the route
+    const frontendPath = path.join(__dirname, '../frontend');
+    const requestedPath = req.path === '/' ? '/index.html' : req.path + '.html';
+    const filePath = path.join(frontendPath, requestedPath);
+
+    // Check if the HTML file exists, otherwise serve index.html
+    res.sendFile(filePath, (err) => {
+      if (err) {
+        res.sendFile(path.join(frontendPath, 'index.html'));
+      }
+    });
   });
 } else {
   // 404 handler for development

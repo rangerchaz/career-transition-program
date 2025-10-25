@@ -52,10 +52,8 @@ COPY --from=backend-builder /app/backend/node_modules ./node_modules
 COPY --from=backend-builder /app/backend/package*.json ./
 COPY --from=backend-builder /app/backend/prisma ./prisma
 
-# Copy frontend build
-COPY --from=frontend-builder /app/frontend/.next/standalone ./frontend
-COPY --from=frontend-builder /app/frontend/.next/static ./frontend/.next/static
-COPY --from=frontend-builder /app/frontend/public ./frontend/public
+# Copy frontend static export
+COPY --from=frontend-builder /app/frontend/out ./frontend
 
 # Expose port
 EXPOSE 8080
