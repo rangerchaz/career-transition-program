@@ -9,6 +9,7 @@ services:
       deploy_on_push: true
 
     dockerfile_path: Dockerfile
+    source_dir: /
 
     envs:
       - key: DATABASE_URL
